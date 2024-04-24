@@ -18,8 +18,8 @@ def process_log_line(body):
         request_body["timestamp"] = time
         request_body["content"] = data
         
-        dynatrace_api_key = os.environ("DYNATRACE_API_KEY")
-        tenant_url = os.environ("DYNATRACE_ENDPOINT")
+        dynatrace_api_key = os.environ["DYNATRACE_API_KEY"]
+        tenant_url = os.environ["DYNATRACE_ENDPOINT"]
         # Remove the trailing slash if it exits
         if tenant_url.endswith("/"):
             tenant_url = tenant_url[:-1]
