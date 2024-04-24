@@ -9,14 +9,32 @@ LOG_INGEST_ENDPOINT = "/api/v2/logs/ingest"
 def process_log_line(body):
     try:
         logging.getLogger().info(f"Body: {body}")
-        data = body.get("data", {})
         source = body.get("source")
         time = body.get("time")
 
-        request_body = {}
-        request_body["log.source"] = source
-        request_body["timestamp"] = time
-        request_body["content"] = data
+        data = body.get("data", {})
+        # Pull fields out of the OCI body for use as Dynatrace attribute key/value pairs
+        message = data.get("message", "")
+        region = data.get("region", "")
+        tenant_name = data.get("tenantName", "")
+        tenant_id = data.get("tenantId", "")
+        compartment_name = data.get("compartmentName", "")
+        compartment_id = data.get("compartmentId", "")
+        principal_name = data.get("principalName", "")
+        principal_id = data.get("principalId", "")
+
+        request_body = {
+            "log.source": source,
+            "timestamp": time,
+            "content": message,
+            "oci.region": region,
+            "oci.tenant_name": tenant_name,
+            "oci.tenant_id": tenant_id,
+            "oci.compartment_name": compartment_name,
+            "oci.compartment_id": compartment_id,
+            "oci.principal_name": principal_name,
+            "oci.principal_id": principal_id
+        }
         
         dynatrace_api_key = os.environ["DYNATRACE_API_KEY"]
         tenant_url = os.environ["DYNATRACE_ENDPOINT"]
