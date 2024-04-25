@@ -14,6 +14,8 @@ def process_log_line(body):
 
         data = body.get("data", {})
         # Pull fields out of the OCI body for use as Dynatrace attribute key/value pairs
+        bucket_id = data.get("bucketId", "")
+        bucket_name = data.get("bucketName", "")
         message = data.get("message", "")
         region = data.get("region", "")
         tenant_name = data.get("tenantName", "")
@@ -24,9 +26,11 @@ def process_log_line(body):
         principal_id = data.get("principalId", "")
 
         request_body = {
-            "log.source": source,
+            "log.source": "Oracle Cloud Infrastructure",
             "timestamp": time,
             "content": message,
+            "oci.bucket_id": bucket_id,
+            "oci.bucket_name": bucket_name,
             "oci.region": region,
             "oci.tenant_name": tenant_name,
             "oci.tenant_id": tenant_id,
