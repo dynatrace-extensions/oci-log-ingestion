@@ -37,7 +37,7 @@ def process_log_line(body):
         }
         
         dynatrace_api_key = os.environ["DYNATRACE_API_KEY"]
-        tenant_url = os.environ["DYNATRACE_ENDPOINT"]
+        tenant_url = os.environ["DYNATRACE_TENANT"]
         # Remove the trailing slash if it exits
         if tenant_url.endswith("/"):
             tenant_url = tenant_url[:-1]
