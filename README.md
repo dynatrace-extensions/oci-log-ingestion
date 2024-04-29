@@ -3,7 +3,7 @@ With the OCI Log ingest function, OCI users can stream their logs directly into 
 This OCI function was created to work alongside the Oracle Cloud Infrastructure extension found on the Dynatrace Hub.
 
 ### Getting Started
-**Note:** These actions must be done by a OCI tenancy administrator using the Oracle Cloud Shell or editor.
+**Note:** These actions must be done by a OCI tenancy administrator using the Oracle Cloud Shell or Oracle Code Editor.
 
 **OCI logs**
 1. Login to the OCI portal and search for *Log Groups*
