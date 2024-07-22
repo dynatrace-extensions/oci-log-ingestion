@@ -29,6 +29,7 @@ def process_log_line(body):
             "log.source": "Oracle Cloud Infrastructure",
             "timestamp": time,
             "content": message,
+            "cloud.provider": "oci",
             "oci.bucket_id": bucket_id,
             "oci.bucket_name": bucket_name,
             "oci.region": region,
