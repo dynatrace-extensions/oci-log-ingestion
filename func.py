@@ -57,10 +57,6 @@ def process_log_line(body):
     except (Exception, ValueError) as ex:
         logging.getLogger().error(str(ex))
 
-"""
-This function receives the logging json and invokes the Datadog endpoint for ingesting logs. https://docs.cloud.oracle.com/en-us/iaas/Content/Logging/Reference/top_level_logging_format. htm#top_level_logging_format
-If this Function is invoked with more than one log the function go over each log and invokes the endpoint for ingesting one by one.
-"""
 def handler(ctx, data: io.BytesIO=None):
     try:
         body = json.loads(data.getvalue())
