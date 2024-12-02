@@ -4,6 +4,8 @@ This OCI function was created to work alongside the Oracle Cloud Infrastructure 
 
 ### Getting Started
 **Note:** These actions must be done by a OCI tenancy administrator using the Oracle Cloud Shell or Oracle Code Editor.
+Policies must also be configured in the OCI tenant to allow the Service Connector read metrics from the tenant. Users should do this using a group where the resource type is `serviceconnectors` before assigning the following policy: 
+`Allow group <GROUP_NAME> to read metrics in tenancy`
 
 **OCI logs**    
 1. Login to the OCI portal and search for **Log Groups**
