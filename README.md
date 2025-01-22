@@ -1,4 +1,7 @@
-# Ingest OCI logs into Dynatrace
+## Purpose
+See https://www.dynatrace.com/hub/detail/oracle-connector-hub-signals-ingest/
+
+## Ingest OCI logs into Dynatrace
 With the OCI Log ingest function, OCI users can stream their logs directly into Dynatrace for troubleshooting and root cause analysis using Davis® AI.  
 This OCI function was created to work alongside the Oracle Cloud Infrastructure extension found on the Dynatrace Hub.
 
