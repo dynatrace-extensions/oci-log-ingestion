@@ -1,8 +1,9 @@
 import io
 import os
 import json
-import requests
 import logging
+
+from dynatrace_client import DynatraceClient
 
 LOG_INGEST_ENDPOINT = "/api/v2/logs/ingest"
 
@@ -41,19 +42,25 @@ def process_log_line(body):
             "oci.principal_id": principal_id
         }
         
-        dynatrace_api_key = os.environ["DYNATRACE_API_KEY"]
         tenant_url = os.environ["DYNATRACE_TENANT"]
         # Remove the trailing slash if it exits
         if tenant_url.endswith("/"):
             tenant_url = tenant_url[:-1]
+        client = DynatraceClient(tenant_url)
 
-        # Append the log ingest endpoint to tenant url
-        tenant_url = f"{tenant_url}{LOG_INGEST_ENDPOINT}"
+        auth_method = os.environ["AUTH_METHOD"]
+        if auth_method == "oauth":
+            client_id = os.environ["OAUTH_CLIENT_ID"]
+            client_secret = os.environ["OAUTH_CLIENT_SECRET"]
+            account_urn = os.environ["OAUTH_ACCOUNT_URN"]
+            client.using_oauth(client_id, client_secret, account_urn)
+        elif auth_method == "token":
+            api_token = os.environ["DYNATRACE_API_KEY"]
+            client.using_api_token(api_token)
+        else:
+            logging.getLogger().error(f"Invalid authentication method '{auth_method}'. Expected either 'oauth' or 'token'")
 
-        headers = {"Content-Type": "application/json", "Authorization": f"Api-Token {dynatrace_api_key}"}
-        response = requests.post(tenant_url, data = json.dumps(request_body), headers=headers) 
-        logging.getLogger().info(response.text)
-
+        client.send_log(json.dumps(request_body))
     except (Exception, ValueError) as ex:
         logging.getLogger().error(str(ex))
 
