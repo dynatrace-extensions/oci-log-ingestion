@@ -7,7 +7,7 @@ memory: 1024
 timeout: 120
 config:
   DYNATRACE_TENANT: <Tenant URL>
-  AUTH_METHOD: "oauth" # Can be either `oauth` or `token` - fill out their respective sections below
+  AUTH_METHOD: "token" # Can be either `oauth` or `token` - fill out their respective sections below
   # OAuth 
   OAUTH_CLIENT_ID: <OAuth Client ID>
   OAUTH_CLIENT_SECRET: <OAuth Client Secret>
