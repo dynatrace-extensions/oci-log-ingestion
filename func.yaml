@@ -6,5 +6,11 @@ entrypoint: /python/bin/fdk /function/func.py handler
 memory: 1024
 timeout: 120
 config:
-  DYNATRACE_TENANT: "<Dynatrace Tenant URL>"
-  DYNATRACE_API_KEY: "<Dynatrace API token with 'logs.ingest' scope>"
+  DYNATRACE_TENANT: <Tenant URL>
+  AUTH_METHOD: "token" # Can be either `oauth` or `token` - fill out their respective sections below
+  # OAuth 
+  OAUTH_CLIENT_ID: <OAuth Client ID>
+  OAUTH_CLIENT_SECRET: <OAuth Client Secret>
+  OAUTH_ACCOUNT_URN: <OAuth Client Account URN>
+  # Token
+  DYNATRACE_API_KEY: <API Key with the 'logs.ingest' scope>
