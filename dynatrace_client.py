@@ -54,6 +54,7 @@ class OAuthClient(BaseClient):
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self._access_token}",
+                "X-Dynatrace-Attr": "dt.ingest.origin=oracle-oci-connectorhub",
             }
             response = requests.post(tenant_url, data=body, headers=headers)
             logging.getLogger().info(response.json())
@@ -72,6 +73,7 @@ class ApiClient(BaseClient):
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Api-Token {self._api_token}",
+                "X-Dynatrace-Attr": "dt.ingest.origin=oracle-oci-connectorhub",
             }
             response = requests.post(tenant_url, data=body, headers=headers)
             logging.getLogger().info(response.text)
