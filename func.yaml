@@ -14,3 +14,10 @@ config:
   OAUTH_ACCOUNT_URN: <OAuth Client Account URN>
   # Token
   DYNATRACE_API_KEY: <API Key with the 'logs.ingest' scope>
+
+  # Optional - Proxy connection information
+  PROXY_URL: <Proxy URL>
+  # Optional
+  PROXY_USERNAME: <Proxy Username>
+  # Optional
+  PROXY_PASSWORD: <Proxy Password>

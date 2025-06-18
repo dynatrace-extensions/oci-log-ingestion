@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
 import logging
 import time
+from typing import Dict
 import requests
 
 LOG_INGEST_ENDPOINT = "/api/v2/logs/ingest"
@@ -47,7 +48,7 @@ class OAuthClient(BaseClient):
                     f"Could not authentication using OAuth: {response.text}"
                 )
 
-    def send_log(self, body: str):
+    def send_log(self, body: str, proxies: Dict[str, str]):
         self.refresh_token()
         try:
             tenant_url = f"{self._tenant}{LOG_INGEST_ENDPOINT}"
@@ -55,7 +56,7 @@ class OAuthClient(BaseClient):
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self._access_token}",
             }
-            response = requests.post(tenant_url, data=body, headers=headers)
+            response = requests.post(tenant_url, data=body, headers=headers, proxies=proxies)
             logging.getLogger().info(response.json())
         except Exception as e:
             logging.getLogger().error(f"Error sending mint metric: {e}")
@@ -66,14 +67,14 @@ class ApiClient(BaseClient):
         self._tenant = tenant
         self._api_token = api_token
 
-    def send_log(self, body: str):
+    def send_log(self, body: str, proxies: Dict[str, str]):
         try:
             tenant_url = f"{self._tenant}{LOG_INGEST_ENDPOINT}"
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Api-Token {self._api_token}",
             }
-            response = requests.post(tenant_url, data=body, headers=headers)
+            response = requests.post(tenant_url, data=body, headers=headers, proxies=proxies)
             logging.getLogger().info(response.text)
         except Exception as e:
             logging.getLogger().error(f"Error sending mint metric: {e}")
@@ -91,5 +92,5 @@ class DynatraceClient:
         self._client = ApiClient(self._tenant, api_token)
         return self
 
-    def send_log(self, body: str):
-        self._client.send_log(body)
+    def send_log(self, body: str, proxies: Dict[str, str]):
+        self._client.send_log(body, proxies)
