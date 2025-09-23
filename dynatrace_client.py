@@ -53,6 +53,7 @@ class OAuthClient(BaseClient):
         try:
             tenant_url = f"{self._tenant}{LOG_INGEST_ENDPOINT}"
             headers = {
+                "X - Dynatrace - Attr": "dt.ingest.origin = oracle - oci - connectorhub",
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self._access_token}",
             }
@@ -71,6 +72,7 @@ class ApiClient(BaseClient):
         try:
             tenant_url = f"{self._tenant}{LOG_INGEST_ENDPOINT}"
             headers = {
+                "X - Dynatrace - Attr": "dt.ingest.origin = oracle - oci - connectorhub",
                 "Content-Type": "application/json",
                 "Authorization": f"Api-Token {self._api_token}",
             }
