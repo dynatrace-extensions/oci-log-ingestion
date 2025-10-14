@@ -53,14 +53,14 @@ class OAuthClient(BaseClient):
         try:
             tenant_url = f"{self._tenant}{LOG_INGEST_ENDPOINT}"
             headers = {
-                "X - Dynatrace - Attr": "dt.ingest.origin = oracle - oci - connectorhub",
+                "X-Dynatrace-Attr": "dt.ingest.origin=oracle-oci-connectorhub",
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self._access_token}",
             }
             response = requests.post(tenant_url, data=body, headers=headers, proxies=proxies)
-            logging.getLogger().info(response.json())
+            logging.getLogger().info(f"Response ({response.status_code}): {response.text}")
         except Exception as e:
-            logging.getLogger().error(f"Error sending mint metric: {e}")
+            logging.getLogger().error(f"Error sending log: {e}")
 
 
 class ApiClient(BaseClient):
@@ -72,14 +72,14 @@ class ApiClient(BaseClient):
         try:
             tenant_url = f"{self._tenant}{LOG_INGEST_ENDPOINT}"
             headers = {
-                "X - Dynatrace - Attr": "dt.ingest.origin = oracle - oci - connectorhub",
+                "X-Dynatrace-Attr": "dt.ingest.origin=oracle-oci-connectorhub",
                 "Content-Type": "application/json",
                 "Authorization": f"Api-Token {self._api_token}",
             }
             response = requests.post(tenant_url, data=body, headers=headers, proxies=proxies)
-            logging.getLogger().info(response.json())
+            logging.getLogger().info(f"Response ({response.status_code}): {response.text}")
         except Exception as e:
-            logging.getLogger().error(f"Error sending mint metric: {e}")
+            logging.getLogger().error(f"Error sending log: {e}")
 
 
 class DynatraceClient:
