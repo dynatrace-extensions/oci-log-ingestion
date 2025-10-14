@@ -7,8 +7,6 @@ from typing import Dict, Optional
 from dynatrace_client import DynatraceClient
 from urllib.parse import quote
 
-from dynatrace_client import DynatraceClient
-
 LOG_INGEST_ENDPOINT = "/api/v2/logs/ingest"
 
 def process_log_line(body):
@@ -45,6 +43,7 @@ def process_log_line(body):
             "oci.principal_name": principal_name,
             "oci.principal_id": principal_id
         }
+        logging.getLogger().info(f"Dynatrace Log Body: {request_body}")
         
         tenant_url = os.environ["DYNATRACE_TENANT"]
         # Remove the trailing slash if it exits
@@ -66,6 +65,7 @@ def process_log_line(body):
         
         proxy_url = create_proxy_connection()
         proxies = {"http": proxy_url, "https": proxy_url} if proxy_url else None
+        logging.getLogger().info(f"Using proxies: {proxies}")
         client.send_log(json.dumps(request_body), proxies)
     except (Exception, ValueError) as ex:
         logging.getLogger().error(str(ex))
@@ -77,15 +77,12 @@ def create_proxy_connection() -> Optional[Dict[str, str]]:
 
     if proxy_address is None:
         return None
-
-    if proxy_address:
-        protocol, address = proxy_address.split("://")
-        proxy_url = f"{protocol}://"
-        proxy_url += _create_user_pass_url(proxy_username, proxy_password)
-        proxy_url += f"{address}"
-        return proxy_url
-
-    return None
+    
+    protocol, address = proxy_address.split("://")
+    proxy_url = f"{protocol}://"
+    proxy_url += _create_user_pass_url(proxy_username, proxy_password)
+    proxy_url += f"{address}"
+    return proxy_url
 
 
 def _create_user_pass_url(proxy_username: str, proxy_password: str) -> str:

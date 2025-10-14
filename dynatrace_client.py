@@ -77,7 +77,7 @@ class ApiClient(BaseClient):
                 "Authorization": f"Api-Token {self._api_token}",
             }
             response = requests.post(tenant_url, data=body, headers=headers, proxies=proxies)
-            logging.getLogger().info(response.text)
+            logging.getLogger().info(response.json())
         except Exception as e:
             logging.getLogger().error(f"Error sending mint metric: {e}")
 
