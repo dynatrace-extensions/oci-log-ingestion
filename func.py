@@ -75,7 +75,7 @@ def create_proxy_connection() -> Optional[Dict[str, str]]:
     proxy_username = os.environ.get("PROXY_USERNAME", None)
     proxy_password = os.environ.get("PROXY_PASSWORD", None)
 
-    if proxy_address is None:
+    if proxy_address is None or not (proxy_address.startswith("http") or proxy_address.startswith("https")):
         return None
     
     protocol, address = proxy_address.split("://")
