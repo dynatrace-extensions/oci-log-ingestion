@@ -2,31 +2,44 @@ import io
 import os
 import json
 import logging
-from typing import Dict, Optional
+from typing import Tuple, Dict, Optional
 
 from dynatrace_client import DynatraceClient
 from urllib.parse import quote
 
 LOG_INGEST_ENDPOINT = "/api/v2/logs/ingest"
 
+def extract_message(data) -> Optional[str]:
+    if message := data.get("message", None):
+        return message
+    
+    if message := data.get("msg", None):
+        return message
+    logging.getLogger().info("Could not find a valid message key in the log body")
+    return None
+
+def extract_oracle_dimensions(data) -> Tuple[Optional[str], Optional[str]]:
+    if oracle := data.get("oracle"):
+        return (oracle.get("tenantid"), oracle.get("compartmentid"))
+
+    return (data.get("tenantId"), data.get("compartmentId"))
+
+
 def process_log_line(body):
     try:
         logging.getLogger().info(f"Body: {body}")
-        source = body.get("source")
         time = body.get("time")
 
+        tenant_id, compartment_id = extract_oracle_dimensions(body)
         data = body.get("data", {})
-        # Pull fields out of the OCI body for use as Dynatrace attribute key/value pairs
-        bucket_id = data.get("bucketId", "")
-        bucket_name = data.get("bucketName", "")
-        message = data.get("message", "")
-        region = data.get("region", "")
-        tenant_name = data.get("tenantName", "")
-        tenant_id = data.get("tenantId", "")
-        compartment_name = data.get("compartmentName", "")
-        compartment_id = data.get("compartmentId", "")
-        principal_name = data.get("principalName", "")
-        principal_id = data.get("principalId", "")
+        bucket_id = data.get("bucketId", None)
+        bucket_name = data.get("bucketName", None)
+        message = extract_message(data)
+        region = data.get("region", None)
+        tenant_name = data.get("tenantName", None)
+        compartment_name = data.get("compartmentName", None)
+        principal_name = data.get("principalName", None)
+        principal_id = data.get("principalId", None)
 
         request_body = {
             "log.source": "Oracle Cloud Infrastructure",
@@ -45,7 +58,6 @@ def process_log_line(body):
         }
         
         tenant_url = os.environ["DYNATRACE_TENANT"]
-        # Remove the trailing slash if it exits
         if tenant_url.endswith("/"):
             tenant_url = tenant_url[:-1]
         client = DynatraceClient(tenant_url)
@@ -68,7 +80,7 @@ def process_log_line(body):
     except (Exception, ValueError) as ex:
         logging.getLogger().error(str(ex))
 
-def create_proxy_connection() -> Optional[Dict[str, str]]:
+def create_proxy_connection() -> Optional[str]:
     proxy_address = os.environ.get("PROXY_URL", None)
     proxy_username = os.environ.get("PROXY_USERNAME", None)
     proxy_password = os.environ.get("PROXY_PASSWORD", None)
@@ -76,7 +88,7 @@ def create_proxy_connection() -> Optional[Dict[str, str]]:
     if proxy_address is None or not (proxy_address.startswith("http") or proxy_address.startswith("https")):
         return None
     
-    protocol, address = proxy_address.split("://")
+    protocol, address = proxy_address.split("://", 1)
     proxy_url = f"{protocol}://"
     proxy_url += _create_user_pass_url(proxy_username, proxy_password)
     proxy_url += f"{address}"
